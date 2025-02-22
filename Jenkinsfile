@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/GeniusDennis1224/comp367-webapp.git'
+                git branch: 'main', url: 'https://github.com/GeniusDennis1224/COMP367_Lab02_Maven.git'
             }
         }
         stage('Build') {
