@@ -3,13 +3,14 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // newly-added credentials of docker-hub in Jenkins
-        DOCKER_IMAGE = 'geniusdennis1224/comp367-lab0-maven'
+        GIT_CREDENTIALS = 'github-token'    // github credential configuered in Jenkins
+        DOCKER_IMAGE = 'geniusdennis1224/comp367-lab2-maven'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/GeniusDennis1224/COMP367-Lab2_Maven.git'
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/GeniusDennis1224/COMP367-Lab2_Maven.git'
             }
         }
 
