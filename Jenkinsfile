@@ -1,28 +1,51 @@
 pipeline {
     agent any
-    tools{
-        maven 'Maven 3.9.9'
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = 'docker-hub-credentials' // newly-added credentials of docker-hub in Jenkins
+        DOCKER_IMAGE = 'geniusdennis1224/comp367-lab0-maven'
     }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/GeniusDennis1224/COMP367_Lab02_Maven.git'
+                git 'https://github.com/GeniusDennis1224/COMP367-Lab2_Maven.git'
             }
         }
-        stage('Build') {
+
+        stage('Build Maven Project') {
             steps {
                 sh 'mvn clean package'
             }
         }
-        stage('Test') {
+
+        stage('Docker Login') {
             steps {
-                sh 'mvn test'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
             }
         }
-        stage('Deploy') {
+
+        stage('Docker Build') {
             steps {
-                echo 'Deploying application...'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
